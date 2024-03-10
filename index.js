@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/index.js");
-const blogsRouter = require("./routes/blogsRoute.js");
 const bodyParser = require('body-parser')
 const dotenv = require("dotenv");
 dotenv.config();
@@ -13,8 +12,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // My routes here
-app.use("/", indexRouter);
-app.use("/blogs", blogsRouter);
+app.use("/api", indexRouter);
 
 // I'm Connecting to MongoDB database
 mongoose.connect(process.env.DATABASE_URL);
