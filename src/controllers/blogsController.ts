@@ -1,9 +1,8 @@
-const express = require("express");
-const blogModel = require("../models/blogsModel.js");
-const blogsModel = require("../models/blogsModel.js");
+import { Request, Response } from "express";
+import blogModel from "../models/blogModel";
 
 // Get all blogs logic
-const allBlogs = async (req, res) => {
+const allBlogs = async (req:Request, res:Response) => {
   const blogs = await blogModel.find();
     // res.send(blogs);
     res.status(201).json({
@@ -13,7 +12,7 @@ const allBlogs = async (req, res) => {
 };
 
 // Add blogs here logic
-const addBlog = async (req, res) => {
+const addBlog = async (req:Request, res:Response) => {
   const blog = new blogModel({
     title: req.body.title,
     date: req.body.date,
@@ -35,7 +34,7 @@ const addBlog = async (req, res) => {
 };
 
 // get blog by Id
-const getBlogById = async (req, res) => {
+const getBlogById = async (req:Request, res:Response) => {
   const blog = await blogModel.findById(req.params.id);
 
   if (blog == null) {
@@ -51,15 +50,21 @@ const getBlogById = async (req, res) => {
 };
 
 // Update blog logic
-const updateBlog = async (req, res) => {
-  let myBlog;
+const updateBlog = async (req:Request, res:Response) => {
+    /* let myBlog: typeof blogModel; */
   try {
-    myBlog = await blogsModel.findByIdAndUpdate(req.params.id);
-    myBlog.title = req.body.title;
-    myBlog.date = req.body.date;
-    myBlog.content = req.body.content;
+    const myBlog = await blogModel.findByIdAndUpdate(req.params.id, {
+        title: req.body.title,
+        date: req.body.date,
+        content: req.body.content
+      }, { new: true });
 
-    await myBlog.save();
+      if (!myBlog) {
+        res.status(404).json({ message: "Blog not found" });
+        return;
+      }
+      
+    await myBlog?.save();
 
     // res.send(myBlog);
     res.status(200).json({
@@ -75,7 +80,7 @@ const updateBlog = async (req, res) => {
 };
 
 // Delete a blog logic
-const deleteBlog = async (req, res) => {
+const deleteBlog = async (req:Request, res:Response) => {
   try {
     await blogModel.findByIdAndDelete(req.params.id);
     res.status(200).json({
@@ -89,7 +94,7 @@ const deleteBlog = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   allBlogs,
   addBlog,
   updateBlog,
