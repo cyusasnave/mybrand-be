@@ -9,7 +9,7 @@ const validation_1 = __importDefault(require("../middlewares/validation"));
 const blogRouter = express_1.default.Router();
 blogRouter.get("/", blogsController_1.default.allBlogs);
 blogRouter.get("/:id", blogsController_1.default.getBlogById);
-blogRouter.post("/", validation_1.default, blogsController_1.default.addBlog);
+blogRouter.post("/", validation_1.default.isValidBlog, blogsController_1.default.addBlog);
 blogRouter.patch("/:id", blogsController_1.default.updateBlog);
 blogRouter.delete("/:id", blogsController_1.default.deleteBlog);
 exports.default = blogRouter;
