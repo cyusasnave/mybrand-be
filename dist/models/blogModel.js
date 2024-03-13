@@ -19,5 +19,6 @@ const blogSchema = new Schema({
         required: true,
     },
     blogs_comments: [{ type: String }],
+    blog_likes: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Like" }]
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Blog", blogSchema);
