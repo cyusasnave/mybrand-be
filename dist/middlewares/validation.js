@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const blogValidation_1 = __importDefault(require("../validations/blogValidation"));
 const blogCommentvalidation_1 = __importDefault(require("../validations/blogCommentvalidation"));
+const querriesValidation_1 = __importDefault(require("../validations/querriesValidation"));
 const isValidBlog = (req, res, next) => {
     const { error } = (0, blogValidation_1.default)(req.body);
     if (error) {
@@ -33,7 +34,22 @@ const isvalidComment = (req, res, next) => {
         console.error(error);
     }
 };
+const isValidQuerry = (req, res, next) => {
+    const { error } = (0, querriesValidation_1.default)(req.body);
+    if (error) {
+        return res.status(400).json({
+            message: error.details[0].message,
+        });
+    }
+    try {
+        next();
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
 exports.default = {
     isValidBlog,
-    isvalidComment
+    isvalidComment,
+    isValidQuerry
 };
