@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const blogCommentSchema = new Schema({
+    user: {
+        type: String
+    },
     comment: {
         type: String,
         required: true

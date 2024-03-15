@@ -9,6 +9,10 @@ const blogLikesModel = new Schema({
     blog_id: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "Blog"
+    },
+    user_id: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "User"
     }
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Like", blogLikesModel);

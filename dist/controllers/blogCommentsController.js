@@ -17,6 +17,7 @@ const blogModel_1 = __importDefault(require("../models/blogModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { user } = req;
         const id = req.params.id;
         if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
             return res.status(400).json({
@@ -30,16 +31,19 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             });
         }
         const myComment = new blogCommentModel_1.default({
+            user: user.name,
             comment: req.body.comment,
             blog_id: id,
         });
-        const commentData = yield (myComment === null || myComment === void 0 ? void 0 : myComment.save());
-        blog.blogs_comments.push(commentData.comment);
+        const commentData = yield myComment.save();
+        blog.blogs_comments.push(commentData._id);
         yield blog.save();
-        return res.status(201).json({
-            status: "Success",
-            message: "Comment Added successfully",
-            comment: commentData
+        const blogWithComments = yield blogModel_1.default.findById(id).populate('blogs_comments');
+        return res.status(200).json({
+            status: 'Success',
+            message: 'Comment Added successfully',
+            comment: commentData,
+            blogWithComments: blogWithComments,
         });
     }
     catch (error) {

@@ -3,13 +3,28 @@ import blogLikesModel from "../models/blogLikesModel";
 import mongoose, { Types } from "mongoose";
 import blogModel from "../models/blogModel";
 
-const toggleLike = async (req: Request, res: Response) => {
-  const blogId = req.params.id;
+interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
+  user?: any
+}
+
+const toggleLike = async (req: ExtendedRequest, res: Response) => {
+
+  const {user} = req;
+
+  const userId = user._id;
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Invalid User Id!"
+    })
+  }
+  const blogId = req.params.blog_id;
 
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
     return res.status(400).json({
       status: "Fail",
-      message: "Invalid Blog Id",
+      message: "Invalid Blog Id!",
     });
   }
 
@@ -23,12 +38,13 @@ const toggleLike = async (req: Request, res: Response) => {
       });
     }
 
-    let blogLike = await blogLikesModel.findOne({ blog_id: blogId });
+    let blogLike = await blogLikesModel.findOne({ user_id: userId, blog_id: blogId });
 
     if (!blogLike) {
       // Adding a blog like
       const newLike = new blogLikesModel({
-        blog_id: blogId
+        blog_id: blogId,
+        user_id: userId
       });
       const savedLike = await newLike.save();
 
@@ -55,9 +71,47 @@ const toggleLike = async (req: Request, res: Response) => {
     console.error(error);
     return res.status(500).json({
       status: "Fail",
-      message: "Something went wrong",
+      message: "Internal Server Error!",
     });
   }
 };
 
-export default {toggleLike};
+const getNumberOfLikes = async (req:Request, res:Response) => {
+  try {
+    const blogId = req.params.blog_id;
+
+  if (!mongoose.Types.ObjectId.isValid(blogId)) {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Invalid request!"
+    })
+  }
+
+  const blog = await blogModel.findById(blogId);
+
+  if (!blog) {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Blog not found!"
+    })
+  }
+
+  const NberOfLikes = blog?.blog_likes.length;
+
+  res.status(200).json({
+    status: "Success",
+    message: "Likes fetched successfully!",
+    NumberOfLikes: `This blog has ${NberOfLikes} like${NberOfLikes > 1 ? "s" : ""}`
+  })
+  } catch (error) {
+    res.status(500).json({
+      status: "Fail",
+      message: "Internal Server Error!"
+    })
+  }
+}
+
+export default {
+  toggleLike,
+  getNumberOfLikes
+};

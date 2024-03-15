@@ -15,7 +15,7 @@ const authLogIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     if (!token || typeof token !== "string") {
         return res.status(400).json({
             status: "Fail",
-            message: "User not found!",
+            message: "Please logIn to continue!",
         });
     }
     try {
@@ -34,7 +34,7 @@ const authLogIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         console.log(error);
         res.status(400).json({
             status: "Fail",
-            message: "No User found!",
+            message: "Please logIn to continue!",
         });
     }
     next();

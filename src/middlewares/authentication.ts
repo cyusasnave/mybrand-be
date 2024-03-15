@@ -16,7 +16,7 @@ const authLogIn = async (
   if (!token || typeof token !== "string") {
     return res.status(400).json({
       status: "Fail",
-      message: "User not found!",
+      message: "Please logIn to continue!",
     });
   }
 
@@ -34,7 +34,7 @@ const authLogIn = async (
     console.log(error);
     res.status(400).json({
       status: "Fail",
-      message: "No User found!",
+      message: "Please logIn to continue!",
     });
   }
   next();

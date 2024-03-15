@@ -16,7 +16,7 @@ const blogSchema = new Schema(
       type: String,
       required: true,
     },
-    blogs_comments: [{ type: String}],
+    blogs_comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment"}],
     blog_likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like"}]
   },
   { timestamps: true }

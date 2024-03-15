@@ -3,8 +3,15 @@ import blogCommentModel from "../models/blogCommentModel";
 import blogModel from "../models/blogModel";
 import mongoose from "mongoose";
 
-const addComment = async (req: Request, res: Response) => {
+interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
+  user?:any
+}
+
+const addComment = async (req: ExtendedRequest, res: Response) => {
   try {
+
+    const { user } = req;
+
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -22,21 +29,25 @@ const addComment = async (req: Request, res: Response) => {
     }
 
     const myComment = new blogCommentModel({
+      user: user.name,
       comment: req.body.comment,
       blog_id: id,
     });
 
-    const commentData = await myComment?.save();
+    const commentData = await myComment.save();
 
-    blog.blogs_comments.push(commentData.comment);
-
+    blog.blogs_comments.push(commentData._id);
     await blog.save();
 
-    return res.status(201).json({
-      status: "Success",
-      message: "Comment Added successfully",
-      comment: commentData
+    const blogWithComments = await blogModel.findById(id).populate('blogs_comments');
+
+    return res.status(200).json({
+      status: 'Success',
+      message: 'Comment Added successfully',
+      comment: commentData,
+      blogWithComments: blogWithComments,
     });
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({
