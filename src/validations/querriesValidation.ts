@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 const querriesValidation = Joi.object({
-    name: Joi.string().required().min(2).regex(/^[A-Za-z]+$/).messages({
+    name: Joi.string().required().min(2).regex(/^[A-Za-z\s]+$/).messages({
         "string.empty": "Name field can't be empty!",
         "string.pattern.base": "Name can't include numbers and special characters!",
         "string.min": "Name length must be at least 2 characters long!"
