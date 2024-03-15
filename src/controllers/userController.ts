@@ -7,7 +7,7 @@ const createUser = async (req: Request, res: Response) => {
   const user = await userModel.findOne({ email: req.body.email });
 
   if (user) {
-    return res.status(400).json({
+    return res.status(409).json({
       status: "Fail",
       message: `User with email ${req.body.email} already exists in our system!`,
     });
