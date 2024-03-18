@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
 import blogModel from "../models/blogModel";
+import userModel from "../models/userModel";
+
+interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
+  user?: any;
+}
 
 // Get all blogs logic
 const allBlogs = async (req:Request, res:Response) => {
@@ -50,8 +55,17 @@ const getBlogById = async (req:Request, res:Response) => {
 };
 
 // Update blog logic
-const updateBlog = async (req:Request, res:Response) => {
+const updateBlog = async (req:AuthenticatedRequest, res:Response) => {
     /* let myBlog: typeof blogModel; */
+    const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role !== "Admin") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     const myBlog = await blogModel.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
@@ -80,7 +94,16 @@ const updateBlog = async (req:Request, res:Response) => {
 };
 
 // Delete a blog logic
-const deleteBlog = async (req:Request, res:Response) => {
+const deleteBlog = async (req:AuthenticatedRequest, res:Response) => {
+  const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role !== "Admin") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     await blogModel.findByIdAndDelete(req.params.id);
     res.status(200).json({

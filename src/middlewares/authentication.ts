@@ -23,7 +23,7 @@ const authLogIn = async (
   try {
     const decoded = verifyAccessToken(token) as JwtPayload;
     if (decoded) {
-      req.user = decoded.data;
+      req.user = decoded.userId;
     } else {
       return res.status(400).json({
         status: "Fail",

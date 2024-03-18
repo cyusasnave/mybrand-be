@@ -63,7 +63,7 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     try {
-        const token = (0, security_helpers_1.generateAccessToken)(user);
+        const token = (0, security_helpers_1.generateAccessToken)(user._id);
         return res.status(200).json({
             status: "Success",
             message: "User logged In Successfully!",
@@ -79,12 +79,17 @@ const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const loggedInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user } = req;
-    if (user) {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if (userId) {
         return res.status(200).json({
             status: "Success",
             message: "LoggedIn user fetched successfully!",
-            user: user,
+            user: {
+                name: user === null || user === void 0 ? void 0 : user.name,
+                email: user === null || user === void 0 ? void 0 : user.email,
+                role: user === null || user === void 0 ? void 0 : user.role
+            },
         });
     }
     else {
@@ -95,6 +100,14 @@ const loggedInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const users = yield userModel_1.default.find({});
         res.status(200).json({
@@ -111,6 +124,14 @@ const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const user = yield userModel_1.default.findById(req.params.id);
         if (!user) {
@@ -133,6 +154,14 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const salt = yield bcrypt_1.default.genSalt();
         const hashedPassword = yield bcrypt_1.default.hash(req.body.password, salt);
@@ -164,6 +193,14 @@ const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 const deleteuser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const user = yield userModel_1.default.findByIdAndDelete(req.params.id);
         if (!user) {

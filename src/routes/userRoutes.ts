@@ -5,12 +5,12 @@ import validation from "../middlewares/validation";
 
 const userRouter = express.Router();
 
-userRouter.post("/",validation.isValidUser ,userController.createUser)
+userRouter.post("/register",validation.isValidUser ,userController.createUser)
 userRouter.post("/login", userController.logIn)
 userRouter.get("/loggedInUser", authentication.authLogIn, userController.loggedInUser)
-userRouter.get("/", userController.getAllUser)
-userRouter.get("/:id", userController.getUserById)
-userRouter.patch("/:id",validation.isValidUser ,userController.updateUserById)
-userRouter.delete("/:id", userController.deleteuser)
+userRouter.get("/",authentication.authLogIn, userController.getAllUser)
+userRouter.get("/:id",authentication.authLogIn, userController.getUserById)
+userRouter.patch("/:id",authentication.authLogIn,validation.isValidUser ,userController.updateUserById)
+userRouter.delete("/:id",authentication.authLogIn, userController.deleteuser)
 
 export default userRouter;

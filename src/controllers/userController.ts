@@ -3,6 +3,10 @@ import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import { generateAccessToken } from "../helpers/security.helpers";
 
+interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
+  user?: any;
+}
+
 const createUser = async (req: Request, res: Response) => {
   const user = await userModel.findOne({ email: req.body.email });
 
@@ -63,7 +67,7 @@ const logIn = async (req: Request, res: Response) => {
   }
 
   try {
-    const token = generateAccessToken(user);
+    const token = generateAccessToken(user._id);
 
     return res.status(200).json({
       status: "Success",
@@ -79,18 +83,19 @@ const logIn = async (req: Request, res: Response) => {
   }
 };
 
-interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
-  user?: any;
-}
-
 const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
-  const { user } = req;
+  const userId  = req.user;
 
-  if (user) {
+  const user = await userModel.findOne({_id: userId});
+  if (userId) {
     return res.status(200).json({
       status: "Success",
       message: "LoggedIn user fetched successfully!",
-      user: user,
+      user: {
+        name: user?.name,
+        email: user?.email,
+        role: user?.role
+      },
     });
   } else {
     return res.status(400).json({
@@ -100,7 +105,16 @@ const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const getAllUser = async (req: Request, res: Response) => {
+const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
+  const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role !== "Admin") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     const users = await userModel.find({});
 
@@ -117,7 +131,16 @@ const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
-const getUserById = async (req: Request, res: Response) => {
+const getUserById = async (req: AuthenticatedRequest, res: Response) => {
+  const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role === "User") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     const user = await userModel.findById(req.params.id);
 
@@ -141,7 +164,16 @@ const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-const updateUserById = async (req: Request, res: Response) => {
+const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
+  const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role === "User") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -183,7 +215,16 @@ const updateUserById = async (req: Request, res: Response) => {
   }
 };
 
-const deleteuser = async (req: Request, res: Response) => {
+const deleteuser = async (req: AuthenticatedRequest, res: Response) => {
+  const userId  = req.user;
+
+  const user = await userModel.findOne({_id: userId});
+  if (user?.role === "User") {
+    return res.status(400).json({
+      status: "Fail",
+      message: "Only admin can perform this action!",
+    })
+  }
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
 

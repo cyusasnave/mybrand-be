@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const querriesModel_1 = __importDefault(require("../models/querriesModel"));
+const userModel_1 = __importDefault(require("../models/userModel"));
 const addQuerries = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const querry = new querriesModel_1.default({
@@ -36,6 +37,14 @@ const addQuerries = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 const getAllQuerries = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const querries = yield querriesModel_1.default.find({});
         res.status(200).json({
@@ -53,6 +62,14 @@ const getAllQuerries = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 const getQuerryById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const id = req.params.id;
         const singleQuerry = yield querriesModel_1.default.findById(id);
@@ -77,6 +94,14 @@ const getQuerryById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 const updateQuerry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const id = req.params.id;
         const querry = yield querriesModel_1.default.findByIdAndUpdate(id, {
@@ -106,6 +131,14 @@ const updateQuerry = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const deleteQuerry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const id = req.params.id;
         if (!id) {

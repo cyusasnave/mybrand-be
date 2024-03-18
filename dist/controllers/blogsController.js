@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const blogModel_1 = __importDefault(require("../models/blogModel"));
+const userModel_1 = __importDefault(require("../models/userModel"));
 // Get all blogs logic
 const allBlogs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogs = yield blogModel_1.default.find();
@@ -61,6 +62,14 @@ const getBlogById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 // Update blog logic
 const updateBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     /* let myBlog: typeof blogModel; */
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         const myBlog = yield blogModel_1.default.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
@@ -87,6 +96,14 @@ const updateBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 // Delete a blog logic
 const deleteBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user;
+    const user = yield userModel_1.default.findOne({ _id: userId });
+    if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
+        return res.status(400).json({
+            status: "Fail",
+            message: "Only admin can perform this action!",
+        });
+    }
     try {
         yield blogModel_1.default.findByIdAndDelete(req.params.id);
         res.status(200).json({

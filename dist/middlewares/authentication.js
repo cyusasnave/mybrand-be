@@ -21,7 +21,7 @@ const authLogIn = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     try {
         const decoded = (0, security_helpers_1.verifyAccessToken)(token);
         if (decoded) {
-            req.user = decoded.data;
+            req.user = decoded.userId;
         }
         else {
             return res.status(400).json({
