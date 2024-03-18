@@ -40,7 +40,7 @@ const getAllQuerries = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -65,7 +65,7 @@ const getQuerryById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -97,7 +97,7 @@ const updateQuerry = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -134,7 +134,7 @@ const deleteQuerry = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });

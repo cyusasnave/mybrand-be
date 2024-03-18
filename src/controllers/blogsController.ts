@@ -7,17 +7,17 @@ interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
 }
 
 // Get all blogs logic
-const allBlogs = async (req:Request, res:Response) => {
+const allBlogs = async (req: Request, res: Response) => {
   const blogs = await blogModel.find();
-    // res.send(blogs);
-    res.status(201).json({
-      message: "Blogs fetched successfully!",
-      blogs: blogs,
-    });
+  // res.send(blogs);
+  res.status(200).json({
+    message: "Blogs fetched successfully!",
+    blogs: blogs,
+  });
 };
 
 // Add blogs here logic
-const addBlog = async (req:Request, res:Response) => {
+const addBlog = async (req: Request, res: Response) => {
   const blog = new blogModel({
     title: req.body.title,
     date: req.body.date,
@@ -26,7 +26,7 @@ const addBlog = async (req:Request, res:Response) => {
   try {
     await blog.save();
     // res.send(blog);
-    res.status(200).json({
+    res.status(201).json({
       message: "Blog added successfully!",
       blog: blog,
     });
@@ -39,7 +39,7 @@ const addBlog = async (req:Request, res:Response) => {
 };
 
 // get blog by Id
-const getBlogById = async (req:Request, res:Response) => {
+const getBlogById = async (req: Request, res: Response) => {
   const blog = await blogModel.findById(req.params.id);
 
   if (blog == null) {
@@ -55,29 +55,33 @@ const getBlogById = async (req:Request, res:Response) => {
 };
 
 // Update blog logic
-const updateBlog = async (req:AuthenticatedRequest, res:Response) => {
-    /* let myBlog: typeof blogModel; */
-    const userId  = req.user;
+const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
+  /* let myBlog: typeof blogModel; */
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role !== "Admin") {
     return res.status(400).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
-    const myBlog = await blogModel.findByIdAndUpdate(req.params.id, {
+    const myBlog = await blogModel.findByIdAndUpdate(
+      req.params.id,
+      {
         title: req.body.title,
         date: req.body.date,
-        content: req.body.content
-      }, { new: true });
+        content: req.body.content,
+      },
+      { new: true }
+    );
 
-      if (!myBlog) {
-        res.status(404).json({ message: "Blog not found" });
-        return;
-      }
-      
+    if (!myBlog) {
+      res.status(404).json({ message: "Blog not found" });
+      return;
+    }
+
     await myBlog?.save();
 
     // res.send(myBlog);
@@ -94,15 +98,15 @@ const updateBlog = async (req:AuthenticatedRequest, res:Response) => {
 };
 
 // Delete a blog logic
-const deleteBlog = async (req:AuthenticatedRequest, res:Response) => {
-  const userId  = req.user;
+const deleteBlog = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role !== "Admin") {
     return res.status(400).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
     await blogModel.findByIdAndDelete(req.params.id);

@@ -19,14 +19,14 @@ const toggleLike = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { user } = req;
     const userId = user._id;
     if (!mongoose_1.default.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
-            message: "Invalid User Id!"
+            message: "Invalid User Id!",
         });
     }
     const blogId = req.params.blog_id;
     if (!mongoose_1.default.Types.ObjectId.isValid(blogId)) {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Invalid Blog Id!",
         });
@@ -39,12 +39,15 @@ const toggleLike = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 message: "Blog not found",
             });
         }
-        let blogLike = yield blogLikesModel_1.default.findOne({ user_id: userId, blog_id: blogId });
+        let blogLike = yield blogLikesModel_1.default.findOne({
+            user_id: userId,
+            blog_id: blogId,
+        });
         if (!blogLike) {
             // Adding a blog like
             const newLike = new blogLikesModel_1.default({
                 blog_id: blogId,
-                user_id: userId
+                user_id: userId,
             });
             const savedLike = yield newLike.save();
             blog.blog_likes.push(savedLike._id);
@@ -57,7 +60,7 @@ const toggleLike = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         else {
             // Removing a blog like
             yield blogLikesModel_1.default.deleteOne({ _id: blogLike._id });
-            blog.blog_likes = blog.blog_likes.filter(id => !id.equals(blogLike === null || blogLike === void 0 ? void 0 : blogLike._id));
+            blog.blog_likes = blog.blog_likes.filter((id) => !id.equals(blogLike === null || blogLike === void 0 ? void 0 : blogLike._id));
             yield blog.save();
             return res.status(200).json({
                 status: "Success",
@@ -77,33 +80,33 @@ const getNumberOfLikes = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const blogId = req.params.blog_id;
         if (!mongoose_1.default.Types.ObjectId.isValid(blogId)) {
-            return res.status(400).json({
+            return res.status(406).json({
                 status: "Fail",
-                message: "Invalid request!"
+                message: "Invalid request!",
             });
         }
         const blog = yield blogModel_1.default.findById(blogId);
         if (!blog) {
             return res.status(400).json({
                 status: "Fail",
-                message: "Blog not found!"
+                message: "Blog not found!",
             });
         }
         const NberOfLikes = blog === null || blog === void 0 ? void 0 : blog.blog_likes.length;
         res.status(200).json({
             status: "Success",
             message: "Likes fetched successfully!",
-            NumberOfLikes: `This blog has ${NberOfLikes} like${NberOfLikes > 1 ? "s" : ""}`
+            NumberOfLikes: `This blog has ${NberOfLikes} like${NberOfLikes > 1 ? "s" : ""}`,
         });
     }
     catch (error) {
         res.status(500).json({
             status: "Fail",
-            message: "Internal Server Error!"
+            message: "Internal Server Error!",
         });
     }
 });
 exports.default = {
     toggleLike,
-    getNumberOfLikes
+    getNumberOfLikes,
 };

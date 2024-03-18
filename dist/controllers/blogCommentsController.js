@@ -20,7 +20,7 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { user } = req;
         const id = req.params.id;
         if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({
+            return res.status(406).json({
                 message: "Invalid blog Id!",
             });
         }
@@ -38,10 +38,12 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const commentData = yield myComment.save();
         blog.blogs_comments.push(commentData._id);
         yield blog.save();
-        const blogWithComments = yield blogModel_1.default.findById(id).populate('blogs_comments');
+        const blogWithComments = yield blogModel_1.default
+            .findById(id)
+            .populate("blogs_comments");
         return res.status(200).json({
-            status: 'Success',
-            message: 'Comment Added successfully',
+            status: "Success",
+            message: "Comment Added successfully",
             comment: commentData,
             blogWithComments: blogWithComments,
         });
@@ -58,7 +60,7 @@ const blogWithComment = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const blogId = req.params.id;
         if (!mongoose_1.default.Types.ObjectId.isValid(blogId)) {
-            return res.status(400).json({
+            return res.status(406).json({
                 status: "Fail",
                 message: "Blog Id not found!",
             });
@@ -86,5 +88,5 @@ const blogWithComment = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.default = {
     addComment,
-    blogWithComment
+    blogWithComment,
 };

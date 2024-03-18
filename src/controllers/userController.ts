@@ -51,7 +51,7 @@ const logIn = async (req: Request, res: Response) => {
   const user = await userModel.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.status(400).json({
+    return res.status(409).json({
       status: "Fail",
       message: "Invalid user or password. Please try again!",
     });
@@ -60,7 +60,7 @@ const logIn = async (req: Request, res: Response) => {
   const isTruePassword = await bcrypt.compare(req.body.password, user.password);
 
   if (!isTruePassword) {
-    return res.status(400).json({
+    return res.status(409).json({
       status: "Fail",
       message: "Invalid User or password. Please try again!",
     });
@@ -84,9 +84,9 @@ const logIn = async (req: Request, res: Response) => {
 };
 
 const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId  = req.user;
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (userId) {
     return res.status(200).json({
       status: "Success",
@@ -94,7 +94,7 @@ const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
       user: {
         name: user?.name,
         email: user?.email,
-        role: user?.role
+        role: user?.role,
       },
     });
   } else {
@@ -106,14 +106,14 @@ const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId  = req.user;
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role !== "Admin") {
-    return res.status(400).json({
+    return res.status(406).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
     const users = await userModel.find({});
@@ -132,20 +132,20 @@ const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const getUserById = async (req: AuthenticatedRequest, res: Response) => {
-  const userId  = req.user;
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role === "User") {
-    return res.status(400).json({
+    return res.status(406).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
     const user = await userModel.findById(req.params.id);
 
     if (!user) {
-     return res.status(404).json({
+      return res.status(404).json({
         status: "Fail",
         message: "User not found!",
       });
@@ -165,14 +165,14 @@ const getUserById = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
-  const userId  = req.user;
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role === "User") {
-    return res.status(400).json({
+    return res.status(406).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
     const salt = await bcrypt.genSalt();
@@ -194,7 +194,7 @@ const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
     );
 
     if (!user) {
-     return res.status(404).json({
+      return res.status(404).json({
         status: "Fail",
         message: "User not found!",
       });
@@ -216,28 +216,28 @@ const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const deleteuser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId  = req.user;
+  const userId = req.user;
 
-  const user = await userModel.findOne({_id: userId});
+  const user = await userModel.findOne({ _id: userId });
   if (user?.role === "User") {
-    return res.status(400).json({
+    return res.status(406).json({
       status: "Fail",
       message: "Only admin can perform this action!",
-    })
+    });
   }
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
 
     if (!user) {
-       return res.status(404).json({
-          status: "Fail",
-          message: "User not found!",
-        });
-      }
+      return res.status(404).json({
+        status: "Fail",
+        message: "User not found!",
+      });
+    }
 
     res.status(200).json({
       status: "Success",
-      message: "User deleted successfully!"
+      message: "User deleted successfully!",
     });
   } catch (error) {
     res.status(500).json({
@@ -254,5 +254,5 @@ export default {
   getAllUser,
   getUserById,
   updateUserById,
-  deleteuser
+  deleteuser,
 };

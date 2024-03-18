@@ -18,7 +18,7 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const allBlogs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogs = yield blogModel_1.default.find();
     // res.send(blogs);
-    res.status(201).json({
+    res.status(200).json({
         message: "Blogs fetched successfully!",
         blogs: blogs,
     });
@@ -33,7 +33,7 @@ const addBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield blog.save();
         // res.send(blog);
-        res.status(200).json({
+        res.status(201).json({
             message: "Blog added successfully!",
             blog: blog,
         });
@@ -74,7 +74,7 @@ const updateBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const myBlog = yield blogModel_1.default.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
             date: req.body.date,
-            content: req.body.content
+            content: req.body.content,
         }, { new: true });
         if (!myBlog) {
             res.status(404).json({ message: "Blog not found" });

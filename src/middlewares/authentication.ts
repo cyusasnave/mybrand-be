@@ -14,7 +14,7 @@ const authLogIn = async (
   const token = req.headers["authorization"];
 
   if (!token || typeof token !== "string") {
-    return res.status(400).json({
+    return res.status(498).json({
       status: "Fail",
       message: "Please logIn to continue!",
     });
@@ -25,14 +25,14 @@ const authLogIn = async (
     if (decoded) {
       req.user = decoded.userId;
     } else {
-      return res.status(400).json({
+      return res.status(401).json({
         status: "Fail",
-        message: "Can't Access find User!",
+        message: "Unauthorized, Please logIn to continue!",
       });
     }
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    res.status(409).json({
       status: "Fail",
       message: "Please logIn to continue!",
     });

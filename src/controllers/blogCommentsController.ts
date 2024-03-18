@@ -4,18 +4,17 @@ import blogModel from "../models/blogModel";
 import mongoose from "mongoose";
 
 interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
-  user?:any
+  user?: any;
 }
 
 const addComment = async (req: ExtendedRequest, res: Response) => {
   try {
-
     const { user } = req;
 
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
+      return res.status(406).json({
         message: "Invalid blog Id!",
       });
     }
@@ -39,15 +38,16 @@ const addComment = async (req: ExtendedRequest, res: Response) => {
     blog.blogs_comments.push(commentData._id);
     await blog.save();
 
-    const blogWithComments = await blogModel.findById(id).populate('blogs_comments');
+    const blogWithComments = await blogModel
+      .findById(id)
+      .populate("blogs_comments");
 
     return res.status(200).json({
-      status: 'Success',
-      message: 'Comment Added successfully',
+      status: "Success",
+      message: "Comment Added successfully",
       comment: commentData,
       blogWithComments: blogWithComments,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -62,7 +62,7 @@ const blogWithComment = async (req: Request, res: Response) => {
     const blogId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(blogId)) {
-      return res.status(400).json({
+      return res.status(406).json({
         status: "Fail",
         message: "Blog Id not found!",
       });
@@ -93,5 +93,5 @@ const blogWithComment = async (req: Request, res: Response) => {
 
 export default {
   addComment,
-  blogWithComment
+  blogWithComment,
 };

@@ -50,14 +50,14 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const logIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userModel_1.default.findOne({ email: req.body.email });
     if (!user) {
-        return res.status(400).json({
+        return res.status(409).json({
             status: "Fail",
             message: "Invalid user or password. Please try again!",
         });
     }
     const isTruePassword = yield bcrypt_1.default.compare(req.body.password, user.password);
     if (!isTruePassword) {
-        return res.status(400).json({
+        return res.status(409).json({
             status: "Fail",
             message: "Invalid User or password. Please try again!",
         });
@@ -88,7 +88,7 @@ const loggedInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             user: {
                 name: user === null || user === void 0 ? void 0 : user.name,
                 email: user === null || user === void 0 ? void 0 : user.email,
-                role: user === null || user === void 0 ? void 0 : user.role
+                role: user === null || user === void 0 ? void 0 : user.role,
             },
         });
     }
@@ -103,7 +103,7 @@ const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) !== "Admin") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -127,7 +127,7 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -157,7 +157,7 @@ const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -196,7 +196,7 @@ const deleteuser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const userId = req.user;
     const user = yield userModel_1.default.findOne({ _id: userId });
     if ((user === null || user === void 0 ? void 0 : user.role) === "User") {
-        return res.status(400).json({
+        return res.status(406).json({
             status: "Fail",
             message: "Only admin can perform this action!",
         });
@@ -211,7 +211,7 @@ const deleteuser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         res.status(200).json({
             status: "Success",
-            message: "User deleted successfully!"
+            message: "User deleted successfully!",
         });
     }
     catch (error) {
@@ -228,5 +228,5 @@ exports.default = {
     getAllUser,
     getUserById,
     updateUserById,
-    deleteuser
+    deleteuser,
 };
