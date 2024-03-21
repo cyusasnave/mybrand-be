@@ -34,7 +34,7 @@ jobs:
 
     - run: npm ci
 
-    # Uncomment this section if you need to run a build step
+    # Uncomment this section if you need to run a build step -no
     # - run: npm run build --if-present
 
     - name: Run tests
