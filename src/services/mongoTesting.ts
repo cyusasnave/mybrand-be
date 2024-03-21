@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 const mongoTestingConnect = async () => {
-    const url = process.env.DATABASE_TESTING_URL;
+    const url = process.env.DATABASE_TESTING_URL as string;
     await mongoose.connect(url as string);
 }
 
