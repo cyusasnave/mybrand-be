@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import blogLikesModel from "../models/blogLikesModel";
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import blogModel from "../models/blogModel";
 
 interface ExtendedRequest<T = Record<string, any>> extends Request<T> {

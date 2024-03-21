@@ -29,7 +29,6 @@ const createUser = async (req: Request, res: Response) => {
       ...req.body,
       password: hashedPassword,
       ConfirmPassword: hashedConfirmPassword,
-
     });
 
     await newUser.save();
@@ -38,13 +37,13 @@ const createUser = async (req: Request, res: Response) => {
       _id: newUser._id,
       name: newUser.name,
       role: newUser.role,
-      email: newUser.email
-    }
+      email: newUser.email,
+    };
 
     return res.status(201).json({
       status: "Success",
       message: "User created successfully!",
-      user: myUser
+      user: myUser,
     });
   } catch (error) {
     console.error(error);
@@ -130,7 +129,7 @@ const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
-const getUserById = async (req:Request, res: Response) => {
+const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await userModel.findById(req.params.id);
 
@@ -199,7 +198,7 @@ const updateUserById = async (req: Request, res: Response) => {
 
 const deleteuser = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findOne({_id: req.params.id});
+    const user = await userModel.findOne({ _id: req.params.id });
 
     if (!user && user == null) {
       return res.status(404).json({

@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
 import querriesModel from "../models/querriesModel";
-import userModel from "../models/userModel";
-
-interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
-  user?: any;
-}
 
 const addQuerries = async (req: Request, res: Response) => {
   try {
