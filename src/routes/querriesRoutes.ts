@@ -13,26 +13,26 @@ querryRouter.post(
 
 querryRouter.get(
   "/",
-  authentication.authLogIn,
+  authentication.isAdmin,
   querriesController.getAllQuerries
 );
 
 querryRouter.get(
   "/:id",
-  authentication.authLogIn,
+  authentication.isAdmin,
   querriesController.getQuerryById
 );
 
 querryRouter.patch(
   "/:id",
-  authentication.authLogIn,
+  authentication.isAdmin,
   validation.isValidQuerry,
   querriesController.updateQuerry
 );
 
 querryRouter.delete(
   "/:id",
-  authentication.authLogIn,
+  authentication.isAdmin,
   querriesController.deleteQuerry
 );
 

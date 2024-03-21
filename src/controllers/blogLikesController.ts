@@ -11,13 +11,6 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
   const { user } = req;
 
   const userId = user._id;
-
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Invalid User Id!",
-    });
-  }
   const blogId = req.params.blog_id;
 
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
@@ -53,7 +46,7 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
       blog.blog_likes.push(savedLike._id);
       await blog.save();
 
-      return res.status(200).json({
+      return res.status(201).json({
         status: "Success",
         message: "Like successfully added",
       });
@@ -72,7 +65,7 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return res.status(500).json({
       status: "Fail",
       message: "Internal Server Error!",

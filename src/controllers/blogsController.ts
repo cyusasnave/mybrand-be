@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import blogModel from "../models/blogModel";
 import userModel from "../models/userModel";
+import { uploadSingle } from "../helpers/upload";
 
 interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
   user?: any;
@@ -18,10 +19,18 @@ const allBlogs = async (req: Request, res: Response) => {
 
 // Add blogs here logic
 const addBlog = async (req: Request, res: Response) => {
+  const uploadImage = await uploadSingle(req.body.image);
+
+  if ('error' in uploadImage) {
+    return res.status(500).json({
+      message: "Error uploading image",
+      error: uploadImage.error
+    });
+  }
+
   const blog = new blogModel({
-    title: req.body.title,
-    date: req.body.date,
-    content: req.body.content,
+    image: uploadImage.secure_url,
+    ...req.body,
   });
   try {
     await blog.save();
@@ -48,7 +57,7 @@ const getBlogById = async (req: Request, res: Response) => {
     });
   }
   // res.send(blog);
-  res.status(201).json({
+  res.status(200).json({
     message: "Blog fetched successfully!",
     blog: blog,
   });
@@ -67,9 +76,18 @@ const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
     });
   }
   try {
+    const uploadImage = await uploadSingle(req.body.image);
+
+  if ('error' in uploadImage) {
+    return res.status(500).json({
+      message: "Error uploading image",
+      error: uploadImage.error
+    });
+  }
     const myBlog = await blogModel.findByIdAndUpdate(
       req.params.id,
       {
+        image: uploadImage.secure_url,
         title: req.body.title,
         date: req.body.date,
         content: req.body.content,
@@ -109,7 +127,7 @@ const deleteBlog = async (req: AuthenticatedRequest, res: Response) => {
     });
   }
   try {
-    await blogModel.findByIdAndDelete(req.params.id);
+    await blogModel.deleteOne({ _id: req.params.id});
     res.status(200).json({
       message: "Blog deleted successfully!",
     });

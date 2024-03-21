@@ -7,9 +7,9 @@ interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
   user?: any;
 }
 
-const addComment = async (req: ExtendedRequest, res: Response) => {
+const addComment = async (req: Request, res: Response) => {
   try {
-    const { user } = req;
+    const { user } = (req as ExtendedRequest).user;
 
     const id = req.params.id;
 
@@ -28,7 +28,7 @@ const addComment = async (req: ExtendedRequest, res: Response) => {
     }
 
     const myComment = new blogCommentModel({
-      user: user.name,
+      user: user?.name,
       comment: req.body.comment,
       blog_id: id,
     });
@@ -38,15 +38,13 @@ const addComment = async (req: ExtendedRequest, res: Response) => {
     blog.blogs_comments.push(commentData._id);
     await blog.save();
 
-    const blogWithComments = await blogModel
-      .findById(id)
-      .populate("blogs_comments");
+    
 
-    return res.status(200).json({
+    return res.status(201).json({
       status: "Success",
       message: "Comment Added successfully",
       comment: commentData,
-      blogWithComments: blogWithComments,
+      
     });
   } catch (error) {
     console.error(error);
@@ -68,9 +66,11 @@ const blogWithComment = async (req: Request, res: Response) => {
       });
     }
 
-    const blog = await blogModel.findById(blogId);
+    const blogWithComments = await blogModel
+      .findById(blogId)
+      .populate("blogs_comments");
 
-    if (!blog) {
+    if (!blogWithComments) {
       return res.status(404).json({
         status: "Fail",
         message: "Blog not found!",
@@ -80,7 +80,7 @@ const blogWithComment = async (req: Request, res: Response) => {
     return res.status(200).json({
       status: "Success",
       message: "Blog fetched successfully",
-      blog: blog,
+      blogWithComments: blogWithComments
     });
   } catch (error) {
     console.error(error);

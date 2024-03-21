@@ -10,8 +10,8 @@ blogRouter.get("/:id", blogsController.getBlogById);
 
 blogRouter.post("/", validation.isValidBlog, blogsController.addBlog);
 
-blogRouter.patch("/:id", authentication.authLogIn, blogsController.updateBlog);
+blogRouter.patch("/:id", authentication.isAdmin, blogsController.updateBlog);
 
-blogRouter.delete("/:id", authentication.authLogIn, blogsController.deleteBlog);
+blogRouter.delete("/:id", authentication.isAdmin, blogsController.deleteBlog);
 
 export default blogRouter;

@@ -16,7 +16,8 @@ const userValidation = Joi.object({
     }),
     ConfirmPassword: Joi.string().required().equal(Joi.ref('password')).messages({
         "any.only": "Password don't match!"
-    })
+    }),
+    role: Joi.string()
 })
 
 const validateUser = <T> (data: T) => {

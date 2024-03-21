@@ -17,7 +17,7 @@ const addQuerries = async (req: Request, res: Response) => {
     await querry.save();
 
     res.status(201).json({
-      status: "Succes",
+      status: "Success",
       message: "Querry Sent successfully!",
       querry: querry,
     });
@@ -30,16 +30,7 @@ const addQuerries = async (req: Request, res: Response) => {
   }
 };
 
-const getAllQuerries = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const getAllQuerries = async (req: Request, res: Response) => {
   try {
     const querries = await querriesModel.find({});
 
@@ -57,16 +48,7 @@ const getAllQuerries = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const getQuerryById = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const getQuerryById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
@@ -93,16 +75,7 @@ const getQuerryById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const updateQuerry = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const updateQuerry = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
@@ -139,27 +112,20 @@ const updateQuerry = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const deleteQuerry = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const deleteQuerry = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    if (!id) {
+    const querry = await querriesModel.findByIdAndDelete(id);
+
+    if (!querry) {
       return res.status(404).json({
         status: "Fail",
         message: "Querry not found!",
       });
     }
 
-    await querriesModel.findByIdAndDelete(id);
+    // await querriesModel.findByIdAndDelete(id);
 
     res.status(200).json({
       status: "Success",

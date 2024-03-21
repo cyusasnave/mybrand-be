@@ -26,17 +26,25 @@ const createUser = async (req: Request, res: Response) => {
     );
 
     const newUser = new userModel({
-      name: req.body.name,
-      email: req.body.email,
+      ...req.body,
       password: hashedPassword,
       ConfirmPassword: hashedConfirmPassword,
+
     });
 
     await newUser.save();
 
+    const myUser = {
+      _id: newUser._id,
+      name: newUser.name,
+      role: newUser.role,
+      email: newUser.email
+    }
+
     return res.status(201).json({
       status: "Success",
       message: "User created successfully!",
+      user: myUser
     });
   } catch (error) {
     console.error(error);
@@ -53,7 +61,7 @@ const logIn = async (req: Request, res: Response) => {
   if (!user) {
     return res.status(409).json({
       status: "Fail",
-      message: "Invalid user or password. Please try again!",
+      message: "Wrong credentials!",
     });
   }
 
@@ -62,7 +70,7 @@ const logIn = async (req: Request, res: Response) => {
   if (!isTruePassword) {
     return res.status(409).json({
       status: "Fail",
-      message: "Invalid User or password. Please try again!",
+      message: "Wrong credentials!",
     });
   }
 
@@ -105,16 +113,7 @@ const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const getAllUser = async (req: Request, res: Response) => {
   try {
     const users = await userModel.find({});
 
@@ -131,20 +130,11 @@ const getAllUser = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const getUserById = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role === "User") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const getUserById = async (req:Request, res: Response) => {
   try {
     const user = await userModel.findById(req.params.id);
 
-    if (!user) {
+    if (!user && user == null) {
       return res.status(404).json({
         status: "Fail",
         message: "User not found!",
@@ -154,7 +144,7 @@ const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     res.status(200).json({
       status: "Success",
       message: "User fetched successfully!",
-      users: user,
+      user: user,
     });
   } catch (error) {
     res.status(500).json({
@@ -164,16 +154,7 @@ const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role === "User") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const updateUserById = async (req: Request, res: Response) => {
   try {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -187,13 +168,14 @@ const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
       {
         name: req.body.name,
         email: req.body.email,
+        role: req.body.role,
         password: hashedPassword,
         ConfirmPassword: hashedConfirmPassword,
       },
       { new: true }
     );
 
-    if (!user) {
+    if (!user && user == null) {
       return res.status(404).json({
         status: "Fail",
         message: "User not found!",
@@ -205,7 +187,7 @@ const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
     res.status(200).json({
       status: "Success",
       message: "User updated successfully!",
-      users: user,
+      user: user,
     });
   } catch (error) {
     res.status(500).json({
@@ -215,20 +197,11 @@ const updateUserById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const deleteuser = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role === "User") {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
+const deleteuser = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findByIdAndDelete(req.params.id);
+    const user = await userModel.findOne({_id: req.params.id});
 
-    if (!user) {
+    if (!user && user == null) {
       return res.status(404).json({
         status: "Fail",
         message: "User not found!",

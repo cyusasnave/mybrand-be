@@ -5,7 +5,7 @@ dotenv.config();
 export const generateAccessToken = (userId: any) => {
 
     const tokenSecret = process.env.ACCESS_TOKEN_SECRET;
-
+    // Openssl rand -base64 32
     const token = jwt.sign(
         { userId },
         tokenSecret as string,

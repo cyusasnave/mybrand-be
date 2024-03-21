@@ -15,17 +15,17 @@ userRouter.get(
   userController.loggedInUser
 );
 
-userRouter.get("/", authentication.authLogIn, userController.getAllUser);
+userRouter.get("/", authentication.isAdmin, userController.getAllUser);
 
-userRouter.get("/:id", authentication.authLogIn, userController.getUserById);
+userRouter.get("/:id", authentication.isAdmin, userController.getUserById);
 
 userRouter.patch(
   "/:id",
-  authentication.authLogIn,
+  authentication.isAdmin,
   validation.isValidUser,
   userController.updateUserById
 );
 
-userRouter.delete("/:id", authentication.authLogIn, userController.deleteuser);
+userRouter.delete("/:id", authentication.isAdmin, userController.deleteuser);
 
 export default userRouter;
