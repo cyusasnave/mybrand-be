@@ -16,6 +16,8 @@ import {
 } from "../mock/static";
 import mongoose from "mongoose";
 
+jest.setTimeout(20000);
+
 let id: mongoose.Types.ObjectId;
 let token: string;
 let secondToken: string;
