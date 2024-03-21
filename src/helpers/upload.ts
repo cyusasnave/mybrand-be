@@ -1,6 +1,6 @@
 import cloudinary from "./cloudinary";
 
-const folder = "Snave Project Images";
+const folder = "Snave blog Images";
 
 export const uploadSingle = async <T>(image: T) => {
   try {
