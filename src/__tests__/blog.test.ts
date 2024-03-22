@@ -1,7 +1,13 @@
 import Request from "supertest";
 import app from "../app";
 import mongoTesting from "../services/mongoTesting";
-import { InvalidBlogData, blogData, loginUser, registerUser, updateBlog } from "../mock/static";
+import {
+  InvalidBlogData,
+  blogData,
+  loginUser,
+  registerUser,
+  updateBlog,
+} from "../mock/static";
 import blogModel from "../models/blogModel";
 import userModel from "../models/userModel";
 import mongoose from "mongoose";
@@ -42,6 +48,7 @@ describe("Blog API", () => {
       const { body } = await Request(app)
         .post("/api/blogs")
         .expect("Content-Type", /json/)
+        .set("Authorization", `Bearer ${token}`)
         .send(blogData)
         .expect(201);
 
@@ -94,7 +101,7 @@ describe("Blog API", () => {
 
     // testing middlewares
 
-    it('should authenticate the user and if the token is not passed return 498', async () => {
+    it("should authenticate the user and if the token is not passed return 498", async () => {
       const { body } = await Request(app)
         .delete(`/api/blogs/${id}`)
         .expect(498);
@@ -102,13 +109,14 @@ describe("Blog API", () => {
       expect(body.message).toStrictEqual("Please logIn to continue!");
     });
 
-    it('should validate the blog request and if not valid return 400', async () => {
+    it("should validate the blog request and if not valid return 400", async () => {
       const { body } = await Request(app)
         .post("/api/blogs")
         .expect("Content-Type", /json/)
-        .send(InvalidBlogData).expect(400);
+        .send(InvalidBlogData)
+        .expect(400);
 
-        expect(body.message).toBeDefined();
-    })
+      expect(body.message).toBeDefined();
+    });
   });
 });

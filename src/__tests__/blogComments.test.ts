@@ -51,6 +51,7 @@ describe("Blog comments", () => {
     it("should create a new blog", async () => {
       const { body, statusCode } = await Request(app)
         .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
         .send(blogData);
 
       expect(statusCode).toEqual(201);

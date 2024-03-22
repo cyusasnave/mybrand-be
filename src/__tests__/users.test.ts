@@ -57,22 +57,22 @@ describe("User", () => {
       expect(body.message).toBeDefined();
     });
 
-    it("should check if the if valid before login if not return 409", async () => {
+    it("should check if the if valid before login if not return 401", async () => {
       const { body, statusCode } = await Request(app)
         .post("/api/users/login")
         .send(UnExistingEmailloginUser);
 
-      expect(statusCode).toEqual(409);
+      expect(statusCode).toEqual(401);
       expect(body.status).toStrictEqual("Fail");
       expect(body.message).toStrictEqual("Wrong credentials!");
     });
 
-    it("should check if the user password is valid if not return 409", async () => {
+    it("should check if the user password is valid if not return 401", async () => {
       const { body, statusCode } = await Request(app)
         .post("/api/users/login")
         .send(UnExistingPasswordloginUser);
 
-      expect(statusCode).toEqual(409);
+      expect(statusCode).toEqual(401);
       expect(body.status).toStrictEqual("Fail");
       expect(body.message).toStrictEqual("Wrong credentials!");
     });

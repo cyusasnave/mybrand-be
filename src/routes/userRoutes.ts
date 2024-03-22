@@ -1,10 +1,9 @@
-import userController from "../controllers/userController";
 import express from "express";
 import authentication from "../middlewares/authentication";
 import validation from "../middlewares/validation";
+import userController from "../controllers/userController";
 
 const userRouter = express.Router();
-
 userRouter.post("/register", validation.isValidUser, userController.createUser);
 
 userRouter.post("/login", userController.logIn);

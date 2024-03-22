@@ -58,7 +58,7 @@ const logIn = async (req: Request, res: Response) => {
   const user = await userModel.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.status(409).json({
+    return res.status(401).json({
       status: "Fail",
       message: "Wrong credentials!",
     });
@@ -67,7 +67,7 @@ const logIn = async (req: Request, res: Response) => {
   const isTruePassword = await bcrypt.compare(req.body.password, user.password);
 
   if (!isTruePassword) {
-    return res.status(409).json({
+    return res.status(401).json({
       status: "Fail",
       message: "Wrong credentials!",
     });
@@ -198,7 +198,7 @@ const updateUserById = async (req: Request, res: Response) => {
 
 const deleteuser = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findOne({ _id: req.params.id });
+    const user = await userModel.findByIdAndDelete(req.params.id);
 
     if (!user && user == null) {
       return res.status(404).json({

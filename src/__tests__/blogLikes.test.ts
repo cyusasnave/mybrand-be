@@ -48,6 +48,7 @@ describe("Blog Likes", () => {
     it("should create a new blog and return 201", async () => {
       const { body, statusCode } = await Request(app)
         .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
         .send(blogData);
 
       expect(statusCode).toEqual(201);

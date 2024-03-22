@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import blogModel from "../models/blogModel";
-import userModel from "../models/userModel";
 import { uploadSingle } from "../helpers/upload";
 
 interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
@@ -21,16 +20,18 @@ const allBlogs = async (req: Request, res: Response) => {
 const addBlog = async (req: Request, res: Response) => {
   const uploadImage = await uploadSingle(req.body.image);
 
-  if ('error' in uploadImage) {
+  if ("error" in uploadImage) {
     return res.status(500).json({
       message: "Error uploading image",
-      error: uploadImage.error
+      error: uploadImage.error,
     });
   }
 
   const blog = new blogModel({
     image: uploadImage.secure_url,
-    ...req.body,
+    title: req.body.title,
+    date: req.body.date,
+    content: req.body.content,
   });
   try {
     await blog.save();
@@ -65,25 +66,15 @@ const getBlogById = async (req: Request, res: Response) => {
 
 // Update blog logic
 const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
-  /* let myBlog: typeof blogModel; */
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(400).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
   try {
     const uploadImage = await uploadSingle(req.body.image);
 
-  if ('error' in uploadImage) {
-    return res.status(500).json({
-      message: "Error uploading image",
-      error: uploadImage.error
-    });
-  }
+    if ("error" in uploadImage) {
+      return res.status(500).json({
+        message: "Error uploading image",
+        error: uploadImage.error,
+      });
+    }
     const myBlog = await blogModel.findByIdAndUpdate(
       req.params.id,
       {
@@ -117,17 +108,8 @@ const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
 
 // Delete a blog logic
 const deleteBlog = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user;
-
-  const user = await userModel.findOne({ _id: userId });
-  if (user?.role !== "Admin") {
-    return res.status(400).json({
-      status: "Fail",
-      message: "Only admin can perform this action!",
-    });
-  }
   try {
-    await blogModel.deleteOne({ _id: req.params.id});
+    await blogModel.deleteOne({ _id: req.params.id });
     res.status(200).json({
       message: "Blog deleted successfully!",
     });

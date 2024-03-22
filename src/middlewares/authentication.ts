@@ -82,3 +82,12 @@ export default {
   authLogIn,
   isAdmin
 };
+
+
+// {
+//   "name": "Jane Doe",
+//   "email": "jane@gmail.com",
+//   "role": "Admin",
+//   "password": "@Janedoe1234",
+//   "ConfirmPassword": "@Janedoe1234"
+// }

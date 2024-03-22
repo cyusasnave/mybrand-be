@@ -62,7 +62,7 @@ const blogWithComment = async (req: Request, res: Response) => {
     if (!mongoose.Types.ObjectId.isValid(blogId)) {
       return res.status(406).json({
         status: "Fail",
-        message: "Blog Id not found!",
+        message: "Blog Id not valid!",
       });
     }
 
