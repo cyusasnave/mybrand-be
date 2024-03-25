@@ -18,6 +18,10 @@ const options: swaggerJSDoc.Options = {
       {
         "url": "http://localhost:3000/api/",
         "description": "Local server"
+      },
+      {
+        "url": "https://mybrand-be-asyh.onrender.com/api-docs/",
+        "description": "Render server"
       }
     ],
   
