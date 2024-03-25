@@ -6,7 +6,7 @@ const startServer = async () => {
     await mongo.mongoConnect();
 
     const port = 3000;
-    app.listen(port, () => console.info(`Server running on port ${port} 🤜🤛`));
+    app.listen(port, () => console.info(`Server running on port ${port} 🤜🤛 😎`));
 
     swaggerDocs(app, port);
 }
