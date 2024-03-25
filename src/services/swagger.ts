@@ -79,8 +79,8 @@ const options: swaggerJSDoc.Options = {
             }
           }
         },
-        "UNAUTHORIZED": {
-          "description": "UNAUTHORIZED",
+        "Unauthorized": {
+          "description": "Unauthorized",
           "content": {
             "application/json": {
               "schema": {
@@ -88,7 +88,7 @@ const options: swaggerJSDoc.Options = {
                 "properties": {
                   "error": {
                     "type": "string",
-                    "example": "Wrong credentials!"
+                    "example": "Unauthorized, Please login to continue!"
                   }
                 }
               }
@@ -249,7 +249,7 @@ const options: swaggerJSDoc.Options = {
               "example": "This is blog"
             },
             "image": {
-              "type": "string",
+              "type": "file",
               "description": "blog image",
               "example": "car.jpg"
             }
@@ -403,7 +403,7 @@ const options: swaggerJSDoc.Options = {
               "description": "You logged in successfully!"
             },
             "401": {
-              "$ref": "#/components/responses/UNAUTHORIZED"
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -418,8 +418,8 @@ const options: swaggerJSDoc.Options = {
                 "200": {
                     "description": "Logged in User found successfully!"
                 },
-                "498": {
-                    "$ref": "#/components/responses/InvalidToken"
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }
@@ -433,8 +433,8 @@ const options: swaggerJSDoc.Options = {
                 "200": {
                     "description": "Users fetched successfully!"
                 },
-                "498": {
-                    "$ref": "#/components/responses/InvalidToken"
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }
@@ -460,8 +460,8 @@ const options: swaggerJSDoc.Options = {
                 "200": {
                     "description": "User fetched successfully!"
                 },
-                "498": {
-                    "$ref": "#/components/responses/InvalidToken"
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 },
                 "404": {
                     "description": "User not found!"
@@ -479,7 +479,7 @@ const options: swaggerJSDoc.Options = {
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/responses/UpdateUser"
+                            "$ref": "#/components/schemas/UpdateUser"
                         }
                     }
                 }
@@ -500,8 +500,8 @@ const options: swaggerJSDoc.Options = {
                 "200": {
                     "description": "User updated successfully!"
                 },
-                "498": {
-                    "$ref": "#/components/responses/InvalidToken"
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 },
                 "404": {
                     "description": "User not found!"
@@ -530,8 +530,8 @@ const options: swaggerJSDoc.Options = {
                 "200": {
                     "description": "User deleted successfully!"
                 },
-                "498": {
-                    "$ref": "#/components/responses/InvalidToken"
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 },
                 "404": {
                     "description": "User not found!"
@@ -548,7 +548,7 @@ const options: swaggerJSDoc.Options = {
           "requestBody": {
             "required": "true",
             "content": {
-              "application/json": {
+              "multipart/form-data": {
                 "schema": {
                   "$ref": "#/components/schemas/Blogs"
                 }
@@ -568,8 +568,8 @@ const options: swaggerJSDoc.Options = {
             "500": {
                 "description": "Error uploading image/Something went wrong!"
             },
-            "498": {
-                "$ref": "#/components/responses/InvalidToken"
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -637,7 +637,7 @@ const options: swaggerJSDoc.Options = {
           "requestBody": {
             "required": "true",
             "content": {
-              "application/json": {
+              "multipart/form-data": {
                 "schema": {
                   "$ref": "#/components/schemas/updateBlog"
                 }
@@ -651,8 +651,8 @@ const options: swaggerJSDoc.Options = {
             "500": {
               "$ref": "#/components/responses/ServerError"
             },
-            "498": {
-                "$ref": "#/components/responses/InvalidToken"
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -683,8 +683,8 @@ const options: swaggerJSDoc.Options = {
             "500": {
               "$ref": "#/components/responses/ServerError"
             },
-            "498": {
-                "$ref": "#/components/responses/InvalidToken"
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -713,7 +713,7 @@ const options: swaggerJSDoc.Options = {
             "404": {
               "$ref": "#/components/responses/NotFound"
             },
-            "406": {
+            "400": {
                 "description": "Blog Id not valid!"
             }
           }
@@ -756,8 +756,8 @@ const options: swaggerJSDoc.Options = {
             "400": {
               "$ref": "#/components/responses/BadRequest"
             },
-            "498": {
-                "$ref": "#/components/responses/InvalidToken"
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -786,14 +786,47 @@ const options: swaggerJSDoc.Options = {
             "200": {
               "description": "Like successfully removed"
             },
-            "406": {
+            "400": {
               "description": "Invalid blog Id!"
             },
             "404": {
                 "description": "Blog not found"
             },
-            "498": {
-                "$ref": "#/components/responses/InvalidToken"
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
+            }
+          }
+        }
+      },
+      "/blogs/{myblogId}/likes": {
+        "get": {
+          "tags": ["likes"],
+          "summary": "Getting number of like to the blog based on the user",
+          "description": "Getting number of like on Blog",
+          "parameters": [
+            {
+              "name": "myblogId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": 1234
+              },
+              "description": "Blog id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Likes fetched successfully"
+            },
+            "400": {
+              "description": "Invalid blog Id!"
+            },
+            "404": {
+                "description": "Blog not found"
+            },
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
             }
           }
         }
@@ -834,6 +867,9 @@ const options: swaggerJSDoc.Options = {
                 },
                 "500": {
                     "$ref": "#/components/responses/ServerError" 
+                },
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }
@@ -864,6 +900,9 @@ const options: swaggerJSDoc.Options = {
                 },
                 "404": {
                     "description": "Querry not found!"
+                },
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }
@@ -904,6 +943,9 @@ const options: swaggerJSDoc.Options = {
                 },
                 "404": {
                     "description": "Querry not found!"
+                },
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }
@@ -934,6 +976,9 @@ const options: swaggerJSDoc.Options = {
                 },
                 "404": {
                     "description": "Querry not found!"
+                },
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
                 }
             }
         }

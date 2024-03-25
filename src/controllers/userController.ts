@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import { generateAccessToken } from "../helpers/security.helpers";
+import mongoose from "mongoose";
 
 interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
   user?: any;
@@ -12,7 +13,7 @@ const createUser = async (req: Request, res: Response) => {
 
   if (user) {
     return res.status(409).json({
-      status: "Fail",
+      status: "Conflict",
       message: `User with email ${req.body.email} already exists in our system!`,
     });
   }
@@ -26,18 +27,20 @@ const createUser = async (req: Request, res: Response) => {
     );
 
     const newUser = new userModel({
-      ...req.body,
+      name: req.body.name,
+      email: req.body.email,
+      role: req.body.role,
       password: hashedPassword,
-      ConfirmPassword: hashedConfirmPassword,
+      ConfirmPassword: hashedConfirmPassword
     });
 
-    await newUser.save();
+    await newUser?.save();
 
     const myUser = {
-      _id: newUser._id,
-      name: newUser.name,
-      role: newUser.role,
-      email: newUser.email,
+      _id: newUser?._id,
+      name: newUser?.name,
+      role: newUser?.role,
+      email: newUser?.email,
     };
 
     return res.status(201).json({
@@ -48,7 +51,7 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -59,7 +62,7 @@ const logIn = async (req: Request, res: Response) => {
 
   if (!user) {
     return res.status(401).json({
-      status: "Fail",
+      status: "Unauthorized",
       message: "Wrong credentials!",
     });
   }
@@ -68,7 +71,7 @@ const logIn = async (req: Request, res: Response) => {
 
   if (!isTruePassword) {
     return res.status(401).json({
-      status: "Fail",
+      status: "Unauthorized",
       message: "Wrong credentials!",
     });
   }
@@ -84,7 +87,7 @@ const logIn = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -94,19 +97,21 @@ const loggedInUser = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user;
 
   const user = await userModel.findOne({ _id: userId });
+
   if (userId) {
     return res.status(200).json({
       status: "Success",
       message: "LoggedIn user fetched successfully!",
       user: {
+        id: user?._id,
         name: user?.name,
         email: user?.email,
         role: user?.role,
       },
     });
   } else {
-    return res.status(400).json({
-      status: "Fail",
+    return res.status(404).json({
+      status: "Not Found",
       message: "User not found!",
     });
   }
@@ -123,7 +128,7 @@ const getAllUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -131,11 +136,24 @@ const getAllUser = async (req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findById(req.params.id);
-
-    if (!user && user == null) {
+    const id = req.params.id;
+    if (!id) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
+        message: "User not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+    const user = await userModel.findById(id);
+
+    if (!user || user == undefined) {
+      return res.status(404).json({
+        status: "Not Found",
         message: "User not found!",
       });
     }
@@ -147,7 +165,7 @@ const getUserById = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -155,6 +173,19 @@ const getUserById = async (req: Request, res: Response) => {
 
 const updateUserById = async (req: Request, res: Response) => {
   try {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "User not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const hashedConfirmPassword = await bcrypt.hash(
@@ -163,7 +194,7 @@ const updateUserById = async (req: Request, res: Response) => {
     );
 
     const user = await userModel.findByIdAndUpdate(
-      req.params.id,
+      id,
       {
         name: req.body.name,
         email: req.body.email,
@@ -174,9 +205,9 @@ const updateUserById = async (req: Request, res: Response) => {
       { new: true }
     );
 
-    if (!user && user == null) {
+    if (!user || user == undefined) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "User not found!",
       });
     }
@@ -190,7 +221,7 @@ const updateUserById = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -198,11 +229,24 @@ const updateUserById = async (req: Request, res: Response) => {
 
 const deleteuser = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findByIdAndDelete(req.params.id);
-
-    if (!user && user == null) {
+    const id = req.params.id;
+    if (!id) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
+        message: "User not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+    const user = await userModel.findByIdAndDelete(id);
+
+    if (!user || user == null || user == undefined) {
+      return res.status(404).json({
+        status: "Not Found",
         message: "User not found!",
       });
     }
@@ -213,7 +257,7 @@ const deleteuser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }

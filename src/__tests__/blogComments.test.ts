@@ -52,22 +52,24 @@ describe("Blog comments", () => {
       const { body, statusCode } = await Request(app)
         .post("/api/blogs")
         .set("Authorization", `Bearer ${token}`)
-        .send(blogData);
+        .field('title', blogData.title)
+        .field('content', blogData.content)
+        .attach("image", blogData.image)
 
       expect(statusCode).toEqual(201);
       expect(body.blog._id).toBeDefined();
       id = body.blog._id;
     });
 
-    it("should check valid mongoose id and if not return 406", async () => {
+    it("should check valid mongoose id and if not return 400", async () => {
       const InvalidId = mongooseInvalidObjectId;
       const { body, statusCode } = await Request(app)
         .post(`/api/blogs/${InvalidId}/comments`)
         .send(comment)
         .set("Authorization", `Bearer ${token}`);
 
-      expect(statusCode).toEqual(406);
-      expect(body.message).toStrictEqual("Invalid blog Id!");
+      expect(statusCode).toEqual(400);
+      expect(body.message).toStrictEqual("Invalid Id!");
     });
 
     it("should check if the blog exist and if not return 404", async () => {
@@ -102,7 +104,7 @@ describe("Blog comments", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Blog not found!");
     });
 

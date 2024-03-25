@@ -49,7 +49,9 @@ describe("Blog Likes", () => {
       const { body, statusCode } = await Request(app)
         .post("/api/blogs")
         .set("Authorization", `Bearer ${token}`)
-        .send(blogData);
+        .field('title', blogData.title)
+        .field('content', blogData.content)
+        .attach("image", blogData.image)
 
       expect(statusCode).toEqual(201);
       expect(body.blog).toBeDefined();
@@ -62,9 +64,9 @@ describe("Blog Likes", () => {
         .post(`/api/blogs/${InvalidMongooseId}/likes`)
         .set("Authorization", `Bearer ${token}`);
 
-      expect(statusCode).toEqual(406);
-      expect(body.status).toStrictEqual("Fail");
-      expect(body.message).toStrictEqual("Invalid Blog Id!");
+      expect(statusCode).toEqual(400);
+      expect(body.status).toStrictEqual("Bad Request");
+      expect(body.message).toStrictEqual("Invalid Id!");
     });
 
     it("should check if the blog exist and if not return 404", async () => {
@@ -74,7 +76,7 @@ describe("Blog Likes", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Blog not found");
     });
 
@@ -106,9 +108,9 @@ describe("Blog Likes", () => {
         `/api/blogs/${myInvalidBlogId}/likes`
       );
 
-      expect(statusCode).toEqual(406);
-      expect(body.status).toStrictEqual("Fail");
-      expect(body.message).toStrictEqual("Invalid request!");
+      expect(statusCode).toEqual(400);
+      expect(body.status).toStrictEqual("Bad Request");
+      expect(body.message).toStrictEqual("Invalid Id!");
     });
 
     it("should return 400 if the blog does not exist", async () => {
@@ -118,7 +120,7 @@ describe("Blog Likes", () => {
       );
 
       expect(statusCode).toEqual(400);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Blog not found!");
     });
 

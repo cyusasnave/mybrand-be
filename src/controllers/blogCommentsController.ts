@@ -11,11 +11,19 @@ const addComment = async (req: Request, res: Response) => {
   try {
     const { user } = (req as ExtendedRequest).user;
 
+
     const id = req.params.id;
 
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Blog not found!",
+      });
+    }
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(406).json({
-        message: "Invalid blog Id!",
+      return res.status(400).json({
+        message: "Invalid Id!",
       });
     }
 
@@ -38,18 +46,15 @@ const addComment = async (req: Request, res: Response) => {
     blog.blogs_comments.push(commentData._id);
     await blog.save();
 
-    
-
     return res.status(201).json({
       status: "Success",
       message: "Comment Added successfully",
       comment: commentData,
-      
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -59,10 +64,16 @@ const blogWithComment = async (req: Request, res: Response) => {
   try {
     const blogId = req.params.id;
 
+    if (!blogId) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Blog not found!",
+      });
+    }
+
     if (!mongoose.Types.ObjectId.isValid(blogId)) {
-      return res.status(406).json({
-        status: "Fail",
-        message: "Blog Id not valid!",
+      return res.status(400).json({
+        message: "Invalid Id!"
       });
     }
 
@@ -72,7 +83,7 @@ const blogWithComment = async (req: Request, res: Response) => {
 
     if (!blogWithComments) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Blog not found!",
       });
     }
@@ -80,12 +91,12 @@ const blogWithComment = async (req: Request, res: Response) => {
     return res.status(200).json({
       status: "Success",
       message: "Blog fetched successfully",
-      blogWithComments: blogWithComments
+      blogWithComments: blogWithComments,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }

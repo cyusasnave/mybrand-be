@@ -55,7 +55,6 @@ describe("Querries", () => {
       expect(body.message).toStrictEqual("Querry Sent successfully!");
       expect(body.querry._id).toBeDefined();
       id = body.querry._id;
-      console.log(id);
     });
 
     it("should /GET/ all querries and return 200", async () => {
@@ -75,7 +74,7 @@ describe("Querries", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Querry not found!");
     });
 
@@ -98,7 +97,7 @@ describe("Querries", () => {
         .send(UpdatequerryMessage);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Querry not found!");
     });
 
@@ -121,7 +120,7 @@ describe("Querries", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("Querry not found!");
     });
 

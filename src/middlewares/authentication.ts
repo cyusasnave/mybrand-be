@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verifyAccessToken } from "../helpers/security.helpers";
+import { validateToken, verifyAccessToken } from "../helpers/security.helpers";
 import { JwtPayload } from "jsonwebtoken";
 import userModel from "../models/userModel";
 
@@ -14,15 +14,20 @@ const authLogIn = async (
 ) => {
   const token = req.headers["authorization"]?.split(" ")[1];
 
-  if (!token || typeof token !== "string") {
-    return res.status(498).json({
-      status: "Fail",
-      message: "Please logIn to continue!",
-    });
+  const tokenSecret = process.env.ACCESS_TOKEN_SECRET as string;
+  const validToken = await validateToken(token, tokenSecret);
+
+  if (validToken.valid) {
+    // console.log("Token is valid");
+  } else {
+    return res.status(401).json({
+      status: "401",
+      message: validToken.reason
+    })
   }
 
   try {
-    const decoded = verifyAccessToken(token) as JwtPayload;
+    const decoded = verifyAccessToken(token, res) as JwtPayload;
     if (decoded) {
       req.user = decoded.userId;
     } else {
@@ -43,15 +48,20 @@ const isAdmin = async (
 ) => {
   const token = req.headers["authorization"]?.split(" ")[1];
 
-  if (!token || typeof token !== "string") {
-    return res.status(498).json({
-      status: "Fail",
-      message: "Please logIn to continue!",
-    });
+  const tokenSecret = process.env.ACCESS_TOKEN_SECRET as string;
+  const validToken = await validateToken(token, tokenSecret);
+
+  if (validToken.valid) {
+    // console.log("Token is valid");
+  } else {
+    return res.status(401).json({
+      status: "401",
+      message: validToken.reason
+    })
   }
 
   try {
-    const decoded = verifyAccessToken(token) as JwtPayload;
+    const decoded = verifyAccessToken(token, res) as JwtPayload;
     if (decoded) {
       req.user = decoded.userId;
 
@@ -60,12 +70,11 @@ const isAdmin = async (
       const user = await userModel.findById(userId);
 
       if (user?.role === "User") {
-        return res.status(406).json({
-          status: "Fail",
+        return res.status(403).json({
+          status: "Forbidden",
           message: "Only admin can perform this action!",
         });
       }
-
     } else {
       return res.status(401).json({
         status: "Fail",
@@ -80,14 +89,5 @@ const isAdmin = async (
 
 export default {
   authLogIn,
-  isAdmin
+  isAdmin,
 };
-
-
-// {
-//   "name": "Jane Doe",
-//   "email": "jane@gmail.com",
-//   "role": "Admin",
-//   "password": "@Janedoe1234",
-//   "ConfirmPassword": "@Janedoe1234"
-// }

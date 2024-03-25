@@ -44,16 +44,15 @@ describe("User", () => {
       expect(body.user?._id).toBeDefined();
 
       id = body.user?._id;
-      console.log(id);
     });
 
-    it("should return 406 if the user already exist", async () => {
+    it("should return 409 if the user already exist", async () => {
       const { body, statusCode } = await Request(app)
         .post("/api/users/register")
         .send(registerUser);
 
       expect(statusCode).toEqual(409);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Conflict");
       expect(body.message).toBeDefined();
     });
 
@@ -63,7 +62,7 @@ describe("User", () => {
         .send(UnExistingEmailloginUser);
 
       expect(statusCode).toEqual(401);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Unauthorized");
       expect(body.message).toStrictEqual("Wrong credentials!");
     });
 
@@ -73,7 +72,7 @@ describe("User", () => {
         .send(UnExistingPasswordloginUser);
 
       expect(statusCode).toEqual(401);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Unauthorized");
       expect(body.message).toStrictEqual("Wrong credentials!");
     });
 
@@ -89,7 +88,6 @@ describe("User", () => {
       expect(body.token).toBeDefined();
 
       token = body.token;
-      console.log(token);
     });
 
     it("should get a logged in user and return 200", async () => {
@@ -120,13 +118,11 @@ describe("User", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("User not found!");
     });
 
     it("should get a single user and return 200", async () => {
-      console.log(id);
-      console.log(token);
       const { body, statusCode } = await Request(app)
         .get(`/api/users/${id}`)
         .set("Authorization", `Bearer ${token}`);
@@ -145,7 +141,7 @@ describe("User", () => {
         .send(UpdateUser);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("User not found!");
     });
 
@@ -166,7 +162,7 @@ describe("User", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(statusCode).toEqual(404);
-      expect(body.status).toStrictEqual("Fail");
+      expect(body.status).toStrictEqual("Not Found");
       expect(body.message).toStrictEqual("User not found!");
     });
 
@@ -180,12 +176,12 @@ describe("User", () => {
       expect(body.message).toStrictEqual("User deleted successfully!");
     });
 
-    it("should authenticate the user and if the token is not passed return 498", async () => {
+    it("should authenticate the user and if the token is not passed return 401", async () => {
       const { body } = await Request(app)
         .delete(`/api/users/${id}`)
-        .expect(498);
+        .expect(401);
 
-      expect(body.message).toStrictEqual("Please logIn to continue!");
+      expect(body.message).toBeDefined();
     });
 
     it("should validate the user add request and if not valid return 400", async () => {

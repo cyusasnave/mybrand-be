@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import blogModel from "../models/blogModel";
 import { uploadSingle } from "../helpers/upload";
+import mongoose from "mongoose";
 
 interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
   user?: any;
@@ -9,7 +10,7 @@ interface AuthenticatedRequest<T = Record<string, any>> extends Request<T> {
 // Get all blogs logic
 const allBlogs = async (req: Request, res: Response) => {
   const blogs = await blogModel.find();
-  // res.send(blogs);
+
   res.status(200).json({
     message: "Blogs fetched successfully!",
     blogs: blogs,
@@ -18,24 +19,32 @@ const allBlogs = async (req: Request, res: Response) => {
 
 // Add blogs here logic
 const addBlog = async (req: Request, res: Response) => {
-  const uploadImage = await uploadSingle(req.body.image);
-
-  if ("error" in uploadImage) {
-    return res.status(500).json({
-      message: "Error uploading image",
-      error: uploadImage.error,
-    });
-  }
-
-  const blog = new blogModel({
-    image: uploadImage.secure_url,
-    title: req.body.title,
-    date: req.body.date,
-    content: req.body.content,
-  });
   try {
+    let image;
+    let uploadedImage;
+    if (req.file) {
+      image = req.file
+      const uploadImage = await uploadSingle(image.path);
+
+      if ("error" in uploadImage) {
+        console.log(uploadImage);
+        return res.status(500).json({
+          message: "Error uploading image",
+          error: uploadImage.error,
+        });
+      }
+      
+      uploadedImage = uploadImage?.secure_url;
+    }
+    const blog = new blogModel({
+      image: uploadedImage, 
+      title: req.body.title,
+      date: req.body.date,
+      content: req.body.content,
+    });
+
     await blog.save();
-    // res.send(blog);
+
     res.status(201).json({
       message: "Blog added successfully!",
       blog: blog,
@@ -48,16 +57,29 @@ const addBlog = async (req: Request, res: Response) => {
   }
 };
 
+
 // get blog by Id
 const getBlogById = async (req: Request, res: Response) => {
-  const blog = await blogModel.findById(req.params.id);
+  const id = req.params.id
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Blog not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+  const blog = await blogModel.findById(id);
 
-  if (blog == null) {
-    return res.status(400).json({
+  if (!blog || blog == null || blog == undefined) {
+    return res.status(404).json({
       message: "Blog not found!",
     });
   }
-  // res.send(blog);
   res.status(200).json({
     message: "Blog fetched successfully!",
     blog: blog,
@@ -67,18 +89,41 @@ const getBlogById = async (req: Request, res: Response) => {
 // Update blog logic
 const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const uploadImage = await uploadSingle(req.body.image);
+    let image;
+    let uploadedImage;
+    if (req.file) {
+      image = req.file
+      const uploadImage = await uploadSingle(image.path);
 
-    if ("error" in uploadImage) {
-      return res.status(500).json({
-        message: "Error uploading image",
-        error: uploadImage.error,
+      if ("error" in uploadImage) {
+        console.log(uploadImage);
+        return res.status(500).json({
+          message: "Error uploading image",
+          error: uploadImage.error,
+        });
+      }
+      
+      uploadedImage = uploadImage?.secure_url;
+    }
+
+    const id = req.params.id
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Blog not found!",
       });
     }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+
     const myBlog = await blogModel.findByIdAndUpdate(
-      req.params.id,
+      id,
       {
-        image: uploadImage.secure_url,
+        image: uploadedImage,
         title: req.body.title,
         date: req.body.date,
         content: req.body.content,
@@ -86,9 +131,10 @@ const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
       { new: true }
     );
 
-    if (!myBlog) {
-      res.status(404).json({ message: "Blog not found" });
-      return;
+    if (!myBlog || myBlog == null || myBlog == undefined) {
+      return res.status(404).json({
+        message: "Blog not found!",
+      });
     }
 
     await myBlog?.save();
@@ -109,7 +155,27 @@ const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
 // Delete a blog logic
 const deleteBlog = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await blogModel.deleteOne({ _id: req.params.id });
+    const id = req.params.id
+    // if (!id) {
+    //   return res.status(404).json({
+    //     status: "Not Found",
+    //     message: "Blog not found!",
+    //   });
+    // }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+    const blog = await blogModel.findByIdAndDelete({ _id: id });
+
+    if (!blog || blog == null || blog == undefined) {
+      return res.status(404).json({
+        message: "Blog not found!",
+      });
+    }
+
     res.status(200).json({
       message: "Blog deleted successfully!",
     });

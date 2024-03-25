@@ -10,13 +10,19 @@ interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
 const toggleLike = async (req: ExtendedRequest, res: Response) => {
   const { user } = req;
 
+  if (!user) {
+    return res.status(404).json({
+      message: "No User found!",
+    });
+  }
+
   const userId = user._id;
   const blogId = req.params.blog_id;
 
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
-    return res.status(406).json({
-      status: "Fail",
-      message: "Invalid Blog Id!",
+    return res.status(400).json({
+      status: "Bad Request",
+      message: "Invalid Id!",
     });
   }
 
@@ -25,7 +31,7 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
 
     if (!blog) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Blog not found",
       });
     }
@@ -67,8 +73,8 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      status: "Fail",
-      message: "Internal Server Error!",
+      status: "Internal Server Error",
+      message: "Something went wrong!",
     });
   }
 };
@@ -78,9 +84,9 @@ const getNumberOfLikes = async (req: Request, res: Response) => {
     const blogId = req.params.blog_id;
 
     if (!mongoose.Types.ObjectId.isValid(blogId)) {
-      return res.status(406).json({
-        status: "Fail",
-        message: "Invalid request!",
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
       });
     }
 
@@ -88,7 +94,7 @@ const getNumberOfLikes = async (req: Request, res: Response) => {
 
     if (!blog) {
       return res.status(400).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Blog not found!",
       });
     }
@@ -104,8 +110,8 @@ const getNumberOfLikes = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: "Fail",
-      message: "Internal Server Error!",
+      status: "Internal Server Error",
+      message: "Something went wrong!",
     });
   }
 };

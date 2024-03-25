@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import querriesModel from "../models/querriesModel";
+import mongoose from "mongoose";
 
 const addQuerries = async (req: Request, res: Response) => {
   try {
@@ -19,7 +20,7 @@ const addQuerries = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -37,7 +38,7 @@ const getAllQuerries = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -47,11 +48,24 @@ const getQuerryById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Querry not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+
     const singleQuerry = await querriesModel.findById(id);
 
     if (!singleQuerry) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Querry not found!",
       });
     }
@@ -64,7 +78,7 @@ const getQuerryById = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -73,6 +87,19 @@ const getQuerryById = async (req: Request, res: Response) => {
 const updateQuerry = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Querry not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
 
     const querry = await querriesModel.findByIdAndUpdate(
       id,
@@ -86,7 +113,7 @@ const updateQuerry = async (req: Request, res: Response) => {
 
     if (!querry) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Querry not found!",
       });
     }
@@ -101,7 +128,7 @@ const updateQuerry = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
@@ -111,17 +138,28 @@ const deleteQuerry = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
+    if (!id) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Querry not found!",
+      });
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "Invalid Id!",
+      });
+    }
+
     const querry = await querriesModel.findByIdAndDelete(id);
 
     if (!querry) {
       return res.status(404).json({
-        status: "Fail",
+        status: "Not Found",
         message: "Querry not found!",
       });
     }
-
-    // await querriesModel.findByIdAndDelete(id);
-
+    
     res.status(200).json({
       status: "Success",
       message: "Querry deleted successfully!",
@@ -129,7 +167,7 @@ const deleteQuerry = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "Fail",
+      status: "Internal Server Error",
       message: "Something went wrong!",
     });
   }
