@@ -14,16 +14,6 @@ const options: swaggerJSDoc.Options = {
   
       "title": "My Brand REST API"
     },
-    "servers": [
-      {
-        "url": "http://localhost:3000/api/",
-        "description": "Local server"
-      },
-      {
-        "url": "https://mybrand-be-asyh.onrender.com/api-docs/",
-        "description": "Render server"
-      }
-    ],
   
     "components": {
       "securitySchemes": {
