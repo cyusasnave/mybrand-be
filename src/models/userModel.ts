@@ -1,20 +1,6 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
-
-/**
- * @openapi
- * components
- *   schemas:
- *     CreateNewUser:
- *        type: object
- *        required:
- *          - name
- *          - email
- *          - password
- *          - ConfirmPassword
- */
-
 const userModelSchema = new Schema({
     name: {
         type: String,

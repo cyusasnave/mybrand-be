@@ -11,7 +11,7 @@ blogRouter.get("/:id", blogsController.getBlogById);
 
 blogRouter.post("/", authentication.isAdmin, fileUpload.single('image'), validation.isValidBlog, blogsController.addBlog);
 
-blogRouter.patch("/:id", authentication.isAdmin, fileUpload.single('image'), blogsController.updateBlog);
+blogRouter.patch("/:id", authentication.isAdmin, fileUpload.single('image'), validation.isValidBlog, blogsController.updateBlog);
 
 blogRouter.delete("/:id", authentication.isAdmin, blogsController.deleteBlog);
 
