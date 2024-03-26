@@ -994,7 +994,7 @@ const options: swaggerJSDoc.Options = {
 
 const swaggerSpec = swaggerJSDoc(options); // Corrected variable name
 
-function swaggerDocs(app: Express, port: number) {
+function swaggerDocs(app: Express, port: string) {
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     console.info(`Docs available on http://localhost:${port}/api-docs`);
