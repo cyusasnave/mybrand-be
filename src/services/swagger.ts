@@ -580,7 +580,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/api-docs/blogs/": {
+      "/api/blogs/": {
         get: {
           tags: ["Blogs"],
           summary: "Get all blogs",
