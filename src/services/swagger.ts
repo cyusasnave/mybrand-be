@@ -15,16 +15,12 @@ const options: swaggerJSDoc.Options = {
       title: "My Brand REST API",
     },
     host: "localhost:3000/api/v1",
-    servers: [
-      {
-        url: "http://localhost:3000/api/",
-        description: "Local server",
-      },
-      {
-        url: "mybrand-be-asyh.onrender.com/api-docs/",
-        description: "Render server",
-      },
-    ],
+    // servers: [
+    //   {
+    //     url: "https://mybrand-be-asyh.onrender.com/api-docs/",
+    //     description: "Render server",
+    //   },
+    // ],
 
     components: {
       securitySchemes: {
@@ -579,7 +575,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/": {
+      "/api-docs/blogs/": {
         get: {
           tags: ["Blogs"],
           summary: "Get all blogs",
