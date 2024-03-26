@@ -39,5 +39,4 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
     - run: npm run test:ci
-    - run: npx update-badge
     - run: npx coveralls < coverage/lcov.info
