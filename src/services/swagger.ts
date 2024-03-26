@@ -360,7 +360,7 @@ const options: swaggerJSDoc.Options = {
     ],
 
     paths: {
-      "/users/register": {
+      "/api/users/register": {
         post: {
           tags: ["User"],
           summary: "User register",
@@ -389,7 +389,7 @@ const options: swaggerJSDoc.Options = {
         },
       },
 
-      "/users/login": {
+      "/api/users/login": {
         post: {
           tags: ["User"],
           summary: "User login",
@@ -415,7 +415,7 @@ const options: swaggerJSDoc.Options = {
         },
       },
 
-      "/users/loggedInUser": {
+      "/api/users/loggedInUser": {
         get: {
           tags: ["User"],
           summary: "Get a logged in user",
@@ -430,7 +430,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/users": {
+      "/api/users": {
         get: {
           tags: ["User"],
           summary: "Get all user",
@@ -445,7 +445,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/users/{id}": {
+      "/api/users/{id}": {
         get: {
           tags: ["User"],
           summary: "Get single user",
@@ -475,7 +475,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/users/{userId}": {
+      "/api/users/{userId}": {
         patch: {
           tags: ["User"],
           summary: "Update user",
@@ -515,7 +515,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/users/{deleteId}": {
+      "/api/users/{deleteId}": {
         delete: {
           tags: ["User"],
           summary: "Delete user",
@@ -546,7 +546,7 @@ const options: swaggerJSDoc.Options = {
         },
       },
 
-      "/blogs": {
+      "/api/blogs": {
         post: {
           tags: ["Blogs"],
           summary: "Create blogs",
@@ -596,7 +596,7 @@ const options: swaggerJSDoc.Options = {
         },
       },
 
-      "/blogs/{id}/": {
+      "/api/blogs/{id}/": {
         get: {
           tags: ["Blogs"],
           summary: "Get blog by id",
@@ -623,7 +623,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{Id}": {
+      "/api/blogs/{Id}": {
         patch: {
           tags: ["Blogs"],
           summary: "Update blog.",
@@ -663,7 +663,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{ID}": {
+      "/api/blogs/{ID}": {
         delete: {
           tags: ["Blogs"],
           summary: "Delete delete.",
@@ -695,7 +695,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{ID}/comments": {
+      "/api/blogs/{ID}/comments": {
         get: {
           tags: ["Comments"],
           summary: "Blog comments",
@@ -725,7 +725,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{blogId}/comments": {
+      "/api/blogs/{blogId}/comments": {
         post: {
           tags: ["Comments"],
           summary: "Create comment",
@@ -768,7 +768,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{blogId}/likes": {
+      "/api/blogs/{blogId}/likes": {
         post: {
           tags: ["likes"],
           summary: "Add/remove like to the blog based on the user",
@@ -804,7 +804,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/{myblogId}/likes": {
+      "/api/blogs/{myblogId}/likes": {
         get: {
           tags: ["likes"],
           summary: "Getting number of like to the blog based on the user",
@@ -837,7 +837,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/querries": {
+      "/api/querries": {
         post: {
           tags: ["Querries"],
           summary: "Sending a querry",
@@ -862,7 +862,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/querries/": {
+      "/api/querries/": {
         get: {
           tags: ["Querries"],
           summary: "Getting all querries",
@@ -880,7 +880,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/querries/{id}": {
+      "/api/querries/{id}": {
         get: {
           tags: ["Querries"],
           summary: "Getting a querry",
@@ -913,7 +913,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/querries/{UpdateId}": {
+      "/api/querries/{UpdateId}": {
         patch: {
           tags: ["Querries"],
           summary: "Updating a querry",
@@ -956,7 +956,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/querries/{deleteId}": {
+      "/api/querries/{deleteId}": {
         delete: {
           tags: ["Querries"],
           summary: "Deleting a querry",
