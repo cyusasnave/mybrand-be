@@ -2,6 +2,7 @@ import { Express } from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { version } from "../../package.json";
+import cors from 'cors';
 
 const githubLInk = `https://github.com/cyusasnave/mybrand-be`;
 const options: swaggerJSDoc.Options = {
@@ -15,13 +16,14 @@ const options: swaggerJSDoc.Options = {
       title: "My Brand REST API",
     },
     host: "localhost:3000/api/v1",
+    schemes: ["http","https"],
     servers: [
-      // {
-      //   url: "http://localhost:3000/api/",
-      //   description: "Local server",
-      // },
       {
-        url: "https://mybrand-be-asyh.onrender.com/api-docs/",
+        url: "http://localhost:3000",
+        description: "Local server",
+      },
+      {
+        url: "https://mybrand-be-asyh.onrender.com",
         description: "Render server",
       },
     ],
@@ -351,7 +353,6 @@ const options: swaggerJSDoc.Options = {
       { name: "likes", description: "Liking and Unliking a blog" },
       { name: "Querries", description: "Messaging an admin" },
     ],
-    schemes: ["http","https"],
     security: [
       {
         bearerAuth: [],
@@ -359,7 +360,7 @@ const options: swaggerJSDoc.Options = {
     ],
 
     paths: {
-      "users/register": {
+      "/users/register": {
         post: {
           tags: ["User"],
           summary: "User register",
@@ -579,7 +580,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/blogs/": {
+      "/api-docs/blogs/": {
         get: {
           tags: ["Blogs"],
           summary: "Get all blogs",
@@ -993,9 +994,10 @@ const options: swaggerJSDoc.Options = {
   apis: ["./routes/*.ts", "./models/*.ts"],
 };
 
-const swaggerSpec = swaggerJSDoc(options); // Corrected variable name
+const swaggerSpec = swaggerJSDoc(options);
 
 function swaggerDocs(app: Express, port: string) {
+  app.use(cors());
   app.use("/api-docs/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   console.info(`Docs available on http://localhost:${port}/api-docs`);
