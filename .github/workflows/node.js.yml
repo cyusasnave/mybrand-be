@@ -40,6 +40,4 @@ jobs:
     - run: npm test
     - run: npm run test:ci
     - run: npx update-badge
-    - run:
-        name: Upload coverage to Coveralls
-        command: npx coveralls < coverage/lcov.info
+    - run: npx coveralls < coverage/lcov.info
