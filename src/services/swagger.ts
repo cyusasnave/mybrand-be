@@ -2,7 +2,6 @@ import { Express } from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { version } from "../../package.json";
-import cors from 'cors';
 
 const githubLInk = `https://github.com/cyusasnave/mybrand-be`;
 const options: swaggerJSDoc.Options = {
@@ -997,7 +996,6 @@ const options: swaggerJSDoc.Options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 function swaggerDocs(app: Express, port: string) {
-  app.use(cors());
   app.use("/api-docs/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   console.info(`Docs available on http://localhost:${port}/api-docs`);
