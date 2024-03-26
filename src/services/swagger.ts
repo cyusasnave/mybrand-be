@@ -15,12 +15,16 @@ const options: swaggerJSDoc.Options = {
       title: "My Brand REST API",
     },
     host: "localhost:3000/api/v1",
-    // servers: [
-    //   {
-    //     url: "https://mybrand-be-asyh.onrender.com/api-docs/",
-    //     description: "Render server",
-    //   },
-    // ],
+    servers: [
+      // {
+      //   url: "http://localhost:3000/api/",
+      //   description: "Local server",
+      // },
+      {
+        url: "https://mybrand-be-asyh.onrender.com/api-docs/",
+        description: "Render server",
+      },
+    ],
 
     components: {
       securitySchemes: {
@@ -347,7 +351,7 @@ const options: swaggerJSDoc.Options = {
       { name: "likes", description: "Liking and Unliking a blog" },
       { name: "Querries", description: "Messaging an admin" },
     ],
-    schemes: ["https"],
+    schemes: ["http","https"],
     security: [
       {
         bearerAuth: [],
@@ -355,7 +359,7 @@ const options: swaggerJSDoc.Options = {
     ],
 
     paths: {
-      "/users/register": {
+      "users/register": {
         post: {
           tags: ["User"],
           summary: "User register",
@@ -575,7 +579,7 @@ const options: swaggerJSDoc.Options = {
           },
         },
       },
-      "/api-docs/blogs/": {
+      "/blogs/": {
         get: {
           tags: ["Blogs"],
           summary: "Get all blogs",
@@ -992,7 +996,7 @@ const options: swaggerJSDoc.Options = {
 const swaggerSpec = swaggerJSDoc(options); // Corrected variable name
 
 function swaggerDocs(app: Express, port: string) {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use("/api-docs/", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   console.info(`Docs available on http://localhost:${port}/api-docs`);
 }
