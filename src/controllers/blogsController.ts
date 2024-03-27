@@ -46,6 +46,7 @@ const addBlog = async (req: Request, res: Response) => {
     await blog.save();
 
     res.status(201).json({
+      status: 'Success',
       message: "Blog added successfully!",
       blog: blog,
     });
@@ -81,6 +82,7 @@ const getBlogById = async (req: Request, res: Response) => {
     });
   }
   res.status(200).json({
+    status: 'Success',
     message: "Blog fetched successfully!",
     blog: blog,
   });
@@ -141,6 +143,7 @@ const updateBlog = async (req: AuthenticatedRequest, res: Response) => {
 
     // res.send(myBlog);
     res.status(200).json({
+      status: 'Success',
       message: "Blog updated successfully!",
       blog: myBlog,
     });
@@ -177,6 +180,7 @@ const deleteBlog = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     res.status(200).json({
+      status: 'Success',
       message: "Blog deleted successfully!",
     });
   } catch (error) {
