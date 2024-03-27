@@ -20,6 +20,7 @@ const isValidBlog = (req: Request, res: Response, next: Function) => {
 
   if (error) {
     return res.status(400).json({
+      status: 'Bad Request',
       message: error.details[0].message,
     });
   }
@@ -35,6 +36,7 @@ const isvalidComment = (req: Request, res: Response, next: Function) => {
 
   if (error) {
     return res.status(400).json({
+      status: 'Bad Request',
       message: error.details[0].message,
     });
   }
@@ -50,6 +52,7 @@ const isValidQuerry = (req: Request, res: Response, next: Function) => {
 
   if (error) {
     return res.status(400).json({
+      status: 'Bad Request',
       message: error.details[0].message,
     });
   }
