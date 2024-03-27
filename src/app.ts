@@ -7,7 +7,7 @@ const corsOptions = {
   origin: [
     "https://mybrand-be-asyh.onrender.com/",
     "http://localhost:3000",
-    "http://http://127.0.0.1:5501",
+    "http://127.0.0.1:5501",
   ],
   credentials: true,
   optionsSuccessStatus: 200,
