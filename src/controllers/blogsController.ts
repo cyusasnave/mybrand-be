@@ -74,7 +74,7 @@ const getBlogById = async (req: Request, res: Response) => {
         message: "Invalid Id!",
       });
     }
-  const blog = await blogModel.findById(id).populate('blogs_comments');
+  const blog = await blogModel.findById(id).populate('blogs_comments').populate('blog_likes');
 
   if (!blog || blog == null || blog == undefined) {
     return res.status(404).json({
