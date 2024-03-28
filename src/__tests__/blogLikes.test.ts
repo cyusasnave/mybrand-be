@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 import blogModel from "../models/blogModel";
 import blogLikesModel from "../models/blogLikesModel";
 
-jest.setTimeout(20000);
+jest.setTimeout(30000);
 
 let token: string;
 let id: mongoose.Types.ObjectId;

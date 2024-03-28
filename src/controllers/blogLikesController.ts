@@ -16,7 +16,7 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
     });
   }
 
-  const userId = user._id;
+  const userId = user;
   const blogId = req.params.blog_id;
 
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
@@ -35,10 +35,9 @@ const toggleLike = async (req: ExtendedRequest, res: Response) => {
         message: "Blog not found",
       });
     }
-
-    let blogLike = await blogLikesModel.findOne({
+    const blogLike = await blogLikesModel.findOne({
       user_id: userId,
-      blog_id: blogId,
+      blog_id: blogId
     });
 
     if (!blogLike) {
