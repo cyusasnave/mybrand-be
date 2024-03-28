@@ -90,10 +90,15 @@ const blogWithComment = async (req: Request, res: Response) => {
       });
     }
 
+    const commentsOfBlog = {
+      blogId: blogWithComments._id,
+      comments: blogWithComments.blogs_comments
+    }
+
     return res.status(200).json({
       status: "Success",
       message: "Blog fetched successfully",
-      blogWithComments: blogWithComments,
+      blogWithComments: commentsOfBlog,
     });
   } catch (error) {
     console.error(error);
