@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import blogCommentModel from "../models/blogCommentModel";
 import blogModel from "../models/blogModel";
 import mongoose from "mongoose";
+import userModel from "../models/userModel";
 
 interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
   user?: any;
@@ -9,9 +10,10 @@ interface ExtendedRequest<T = Record<string, any>> extends Request<T> {
 
 const addComment = async (req: Request, res: Response) => {
   try {
-    const { user } = (req as ExtendedRequest).user;
+    const { user } = (req as ExtendedRequest);
 
-
+    const myUser = await userModel.findById(user);
+    console.log(user);
     const id = req.params.id;
 
     if (!id) {
@@ -36,7 +38,7 @@ const addComment = async (req: Request, res: Response) => {
     }
 
     const myComment = new blogCommentModel({
-      user: user?.name,
+      user: myUser?.name,
       comment: req.body.comment,
       blog_id: id,
     });
@@ -49,7 +51,7 @@ const addComment = async (req: Request, res: Response) => {
     return res.status(201).json({
       status: "Success",
       message: "Comment Added successfully",
-      comment: commentData,
+      comment: myComment,
     });
   } catch (error) {
     console.error(error);
